@@ -35,8 +35,7 @@ sudo cp stlink/config/udev/rules.d/49-stlinkv* /etc/udev/rules.d/
 交叉编译器：进入ARM官网下载[下载链接](https://developer.arm.com/downloads/-/gnu-rm)</br>
 openocd：[下载链接](https://github.com/xpack-dev-tools/openocd-xpack/releases/)</br>
 整个windows环境下工具链开发可以参考文章：[参考文章](https://zhuanlan.zhihu.com/p/576972892)</br>
-
-win的同学自行安装stlink驱动
+win的同学自行安装stlink驱动:[参考文章](https://blog.csdn.net/qq_52102933/article/details/126830904)</br>
 
 `项目使用make，所以需要安装mingw，无需安装Ninja作为构建工具`
 

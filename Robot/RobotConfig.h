@@ -27,7 +27,7 @@
 
 /**Motor config*/
 
-#define CRAWLER_NUM 0           //履带电机数量,若未使用履带，赋0即可
+#define CRAWLER_NUM 2           //履带电机数量,若未使用履带，赋0即可
 
 #define Crawler_Left_ID 0x01    //左履带电机
 #define Crawler_Right_ID 0x02   //右履带电机

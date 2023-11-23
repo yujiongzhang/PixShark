@@ -30,6 +30,7 @@ static mqtt::Client* com_nodePtr = NULL;
 static uint32 brightness;
 static int32 servo_angle;
 static int32 thruster_cmd[6] = {100};
+static int32 crawler_cmd[2] = {0};
 
 
 using namespace std;
@@ -60,6 +61,7 @@ void communication_task(const void *arg)
     // com_nodePtr->subscribe("/crawler");
     com_nodePtr->subscribe(SERVO_TOPIC);
     com_nodePtr->subscribe(THRUSTER_TOPIC);
+    com_nodePtr->subscribe(CRAWLER_TOPIC);
 
     for(;;)
     {
@@ -89,6 +91,13 @@ void communication_task(const void *arg)
             result.Get("hbl", thruster_cmd[5]);
         }
 
+        else if(recv_topic.compare(CRAWLER_TOPIC) == 0)
+        {
+            result.Get("left", crawler_cmd[0]);
+            result.Get("right", crawler_cmd[1]);
+            xTaskNotifyGive(crawler_task_handle);
+        }
+
         
     }
 }
@@ -108,6 +117,11 @@ const int32_t* get_servo_anglePrt()
 const int32_t* get_thruster_cmdPrt()
 {
     return thruster_cmd;
+}
+
+const int32_t *get_crawler_cmdPrt()
+{
+    return crawler_cmd;
 }
 
 bool publish(const char* topic, const char* payload, uint32_t payload_len)

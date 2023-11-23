@@ -23,9 +23,10 @@
 #include "RobotConfig.h"
 #include "main.h"
 
+#include "communication_task.hpp"
+
 osThreadId crawler_task_handle;
 
-#if CRAWLER_NUM
 
 
 
@@ -46,7 +47,7 @@ static void crawler_task(void const * argument)
     {
         crawlersPtr[i] = &giants[i];
     }
-    std::array<int16_t, CRAWLER_NUM> crawler_cmd;
+    int32_t crawler_num[2] = {0};
     //初始化can
     can_filter_init();
     for(;;)
@@ -55,10 +56,11 @@ static void crawler_task(void const * argument)
         while (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) != pdPASS)
         {
         }
-        crawler_cmd = robotcomPtr->crawler_cmd_;
+        crawler_num[0] = *get_crawler_cmdPrt();
+        crawler_num[1] = *(get_crawler_cmdPrt()+1);
         for(int i =0 ; i < CRAWLER_NUM; i++)
         {
-            crawlersPtr[i]->set_crawler_expect_speed(crawler_cmd.at(i));
+            crawlersPtr[i]->set_crawler_expect_speed(crawler_num[i]);
         }
         
     }
@@ -67,22 +69,22 @@ static void crawler_task(void const * argument)
 
 void crawler_recevice_callback(uint32_t ID, volatile const uint8_t *can_frame, uint8_t dlc)
 {
-    uint16_t current_feedback = can_frame[0] | can_frame[1] << 8;
-    uint16_t speed_feedback = can_frame[2] | can_frame[3] << 8;
-    uint32_t position_feedback = can_frame[4] | can_frame[5] << 8 | can_frame[6] << 16 | can_frame[7] << 24;
+    // uint16_t current_feedback = can_frame[0] | can_frame[1] << 8;
+    // uint16_t speed_feedback = can_frame[2] | can_frame[3] << 8;
+    // uint32_t position_feedback = can_frame[4] | can_frame[5] << 8 | can_frame[6] << 16 | can_frame[7] << 24;
 
-    if(ID == Crawler_Left_ID)
-    {
-        giants[0].set_crawler_status(current_feedback, speed_feedback, position_feedback);
-        robotcomPtr->crawler_feedback_[0] = giants[0].get_crawler_rpm();
-    }
-    else if(ID == Crawler_Right_ID)
-    {
-        giants[1].set_crawler_status(current_feedback, speed_feedback, position_feedback);
-        robotcomPtr->crawler_feedback_[1] = giants[1].get_crawler_rpm();
-    }
-    //上传数据
-    upload_data(CRAWLER_ID, robotcomPtr->crawler_feedback_.data(), robotcomPtr->crawler_feedback_.size());
+    // if(ID == Crawler_Left_ID)
+    // {
+    //     giants[0].set_crawler_status(current_feedback, speed_feedback, position_feedback);
+    //     robotcomPtr->crawler_feedback_[0] = giants[0].get_crawler_rpm();
+    // }
+    // else if(ID == Crawler_Right_ID)
+    // {
+    //     giants[1].set_crawler_status(current_feedback, speed_feedback, position_feedback);
+    //     robotcomPtr->crawler_feedback_[1] = giants[1].get_crawler_rpm();
+    // }
+    // //上传数据
+    // upload_data(CRAWLER_ID, robotcomPtr->crawler_feedback_.data(), robotcomPtr->crawler_feedback_.size());
 }
 
 
@@ -98,5 +100,3 @@ void crawler_task_start(void)
 {
     crawler_task_handle = osThreadCreate(&os_thread_def_crawler, NULL);
 }
-
-#endif

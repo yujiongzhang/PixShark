@@ -34,6 +34,7 @@ void Main(void);
 #include "altimeter_task.hpp"
 #include "depth_task.hpp"
 #include "thruster_task.hpp"
+#include "crawler_task.hpp"
 
 #endif
 #endif //_COMMON_INC_H_

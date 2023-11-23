@@ -38,7 +38,6 @@ static void servo_task(void const * argument)
         }
         servo->set_servo_angle(*servo_dataPtr);
     }
-    
 }
 
 

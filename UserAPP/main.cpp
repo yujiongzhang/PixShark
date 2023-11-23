@@ -80,8 +80,12 @@ void Main(void)
     // altimeter_task_start();
     // depth_task_start();
     led_task_start();
-    thruster_task_start();
-    servo_task_start();
+    // thruster_task_start();
+    // servo_task_start();
+
+    crawler_task_start();
+
+
     // while (1)
     // {
     //     robot_printf("Hello World!\n");
