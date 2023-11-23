@@ -40,7 +40,7 @@ void bsp_can_transmit(uint32_t ID, uint8_t *pData, uint8_t len)
 	uint16_t i = 0;
 	assert(len <= 8);
     thruster_tx_message.Identifier = ID;											//控制帧ID	
-    thruster_tx_message.IdType = FDCAN_EXTENDED_ID;									//标准ID
+    thruster_tx_message.IdType = FDCAN_STANDARD_ID;									//标准ID
     thruster_tx_message.TxFrameType = FDCAN_DATA_FRAME;								//数据帧
     thruster_tx_message.DataLength = (uint32_t)(len << 16);							//数据长度
 	thruster_tx_message.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
