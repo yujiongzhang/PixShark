@@ -31,6 +31,7 @@ static uint32 brightness;
 static int32 servo_angle;
 static int32 thruster_cmd[6] = {100};
 static int32 crawler_cmd[2] = {0};
+static int32 jet_servo_angle;
 
 
 using namespace std;
@@ -57,11 +58,13 @@ void communication_task(const void *arg)
 
     com_nodePtr->connect(MQTT_SERVER_IP);
 
-    com_nodePtr->subscribe(LED_TOPIC);
+    // com_nodePtr->subscribe(LED_TOPIC);
     // com_nodePtr->subscribe("/crawler");
-    com_nodePtr->subscribe(SERVO_TOPIC);
-    com_nodePtr->subscribe(THRUSTER_TOPIC);
+    // com_nodePtr->subscribe(SERVO_TOPIC);
+    // com_nodePtr->subscribe(THRUSTER_TOPIC);
     com_nodePtr->subscribe(CRAWLER_TOPIC);
+
+    com_nodePtr->subscribe(JET_SERVO_TOPIC);
 
     for(;;)
     {
@@ -98,6 +101,12 @@ void communication_task(const void *arg)
             xTaskNotifyGive(crawler_task_handle);
         }
 
+        else if(recv_topic.compare(JET_SERVO_TOPIC) == 0)
+        {
+            result.Get("jet_servo_angle", jet_servo_angle);
+            xTaskNotifyGive(jet_servo_task_handle);
+        }
+
         
     }
 }
@@ -122,6 +131,11 @@ const int32_t* get_thruster_cmdPrt()
 const int32_t *get_crawler_cmdPrt()
 {
     return crawler_cmd;
+}
+
+const int32_t *get_jet_servo_anglePrt()
+{
+    return &jet_servo_angle;
 }
 
 bool publish(const char* topic, const char* payload, uint32_t payload_len)

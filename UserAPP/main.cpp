@@ -79,9 +79,10 @@ void Main(void)
     // imu_task_start();
     // altimeter_task_start();
     // depth_task_start();
-    led_task_start();
+    // led_task_start();
     // thruster_task_start();
     // servo_task_start();
+    jet_servo_task_start();
 
     crawler_task_start();
 

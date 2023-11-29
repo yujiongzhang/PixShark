@@ -15,6 +15,7 @@ const uint32_t* get_brightnessPrt();
 const int32_t* get_servo_anglePrt();
 const int32_t* get_thruster_cmdPrt();
 const int32_t* get_crawler_cmdPrt();
+const int32_t* get_jet_servo_anglePrt();
 
 #ifdef __cplusplus
 }
@@ -25,6 +26,7 @@ const int32_t* get_crawler_cmdPrt();
 #include "led_task.hpp"
 #include "thruster_task.hpp"
 #include "crawler_task.hpp"
+#include "jet_servo_task.hpp"
 #include <string>
 
 bool publish(const char* topic, const char* payload, uint32_t payload_len);

@@ -19,6 +19,8 @@
 #include "bsp_usart.h"
 #include "DeviceConfig.h"
 
+#include "bsp_can.h"
+#include <assert.h>
 
 AUSServo::AUSServo(uint8_t id = 0x00)
 {
@@ -138,7 +140,7 @@ void AUSServo::set_servo_angle(int16_t angle_set)
 
 void AUSServo::set_servo_angle_multi_turn(int angle_set)
 {
-    unsigned int time_ms = 20000;
+    unsigned int time_ms = 0;
     uint8_t data[11];
     data[0] = servo_id;
     //角度
@@ -203,4 +205,26 @@ void AUSServo::modify_servo_id(uint8_t new_id)
     data[2] = new_id; 
     servo_id = new_id;
     send_servo_pack(Modify_Id_id, data, sizeof(data));
+}
+
+
+AUSServo_Can::AUSServo_Can(int _can_id, uint8_t _servo_id)
+{
+    this->CAN_ID = _can_id;
+    this->servo_id = _servo_id;
+}
+
+void AUSServo_Can::write(void *data, int len)
+{
+    // assert(len <= 8);
+    // bsp_can_transmit(this->CAN_ID, (uint8_t *)data, len);
+    uint8_t *data_temp =  (uint8_t *)data;
+    int len_temp = len;
+    while (len_temp > 8)
+    {
+        bsp_can_transmit(this->CAN_ID, data_temp, 8);
+        len_temp = len_temp - 8;
+        data_temp = data_temp + 8;
+    }
+    bsp_can_transmit(this->CAN_ID, data_temp, len_temp);
 }

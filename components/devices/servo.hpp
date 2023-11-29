@@ -7,8 +7,6 @@
 
 
 
-
-
 class Servo
 {
 public:
@@ -30,7 +28,7 @@ public:
     AUSServo(uint8_t id);
     ~AUSServo(){};
 
-    void write(void * data, int len);
+    virtual void write(void * data, int len);
     /**
      * @brief 设置舵机控制角度，-180~180为单圈，在-180~180外，函数内部调用set_servo_angle_multi_turn
      * @param[in] angle_set:  舵机角度
@@ -87,7 +85,7 @@ public:
     */
     uint16_t send_servo_pack(uint8_t cmd_type, uint8_t *p_data, uint8_t len);
 
-private:
+public:
     uint8_t servo_id;
     static constexpr auto HEAD_SOF = 0x124C; //帧头
     uint8_t servo_tx_buffer[20];
@@ -100,5 +98,22 @@ private:
         Angle_set_multi_id = 0x0D,//舵机角度控制 多圈
     }servo_cmd_e;
 };
+
+/**
+ * 霸勒斯舵机，485通讯
+*/
+class AUSServo_Can : public AUSServo
+{
+public:
+    AUSServo_Can(int _can_id, uint8_t _servo_id);
+    ~AUSServo_Can(){};
+
+    virtual void write(void * data, int len);
+
+private:
+    int CAN_ID;
+
+};
+
 
 #endif /* _SERVO_HPP_ */

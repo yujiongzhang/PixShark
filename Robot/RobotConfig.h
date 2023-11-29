@@ -23,6 +23,7 @@
 #define DEPTH_TOPIC "/depth"
 #define IMU_TOPIC "/imu"
 #define CABIN_INFO_TOPIC "/cabin_info"
+#define JET_SERVO_TOPIC  "/jet_servo"
 
 
 /**Motor config*/
@@ -31,6 +32,8 @@
 
 #define Crawler_Left_ID 0x01    //左履带电机
 #define Crawler_Right_ID 0x02   //右履带电机
+
+#define Jet_Servo_ID 0x301      //射流子机 can 转 485 的Can ID
 
 /**Sensor config*/
 #define DEPTH_FREQUNCY 20      //深度计请求频率
