@@ -93,7 +93,6 @@ public:
     static constexpr auto WRITE_ADDR = 0x88; //sht31写地址
     static constexpr auto READ_ADDR = 0x89; //sht31读地址
 
-
 };
 
 
