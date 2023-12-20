@@ -15,6 +15,10 @@ public:
     virtual void write(void * data, int len) = 0;
     virtual void set_servo_angle(int16_t angle_set) = 0;
     virtual int16_t get_servo_angle() = 0;
+
+    //考虑到自研水下云台 可进行水平方向的旋转，新增加 这两个 horizontal 的函数，普通单轴的舵机无需重写
+    virtual void set_servo_angle_horizontal(int16_t angle_set){ };
+    virtual int16_t get_servo_angle_horizontal(){return 0;};
 private:
 
 };
@@ -100,7 +104,7 @@ public:
 };
 
 /**
- * 霸勒斯舵机，485通讯
+ * 舵机，加了can转485，所以是can通讯的
 */
 class AUSServo_Can : public AUSServo
 {
@@ -114,6 +118,65 @@ private:
     int CAN_ID;
 
 };
+
+
+
+/**
+ * 自研水下云台，485通讯
+ * 比普通舵机多了横向旋转，基类中的 set_servo_angle、get_servo_angle 都针对【和原先单轴云台相同的】俯仰角方向的旋转。
+ * 新增 set_servo_angle_horizontal、get_servo_angle_horizontal 来针对 水平方向的旋转
+*/
+class UnderWater_PT : public Servo
+{
+private:
+    typedef enum
+    {
+        pitch_angle_set_id = 0x4D, //俯仰 角度控制
+        horizontal_angle_set_id = 0x4B, //水平 角度控制
+        pitch_angle_get_id = 0x53, //俯仰 角度获取
+        horizontal_angle_get_id = 0x51 // 水平 角度获取
+    }PT_cmd_e;
+public:
+    UnderWater_PT(/* args */);
+    ~UnderWater_PT();
+
+    virtual void write(void * data, int len);
+    
+    /**
+     * @brief 设置俯仰角 控制角度，范围 -180~180
+     * @param[in] angle_set:  舵机角度
+     * @retval none
+    */
+    virtual void set_servo_angle(int16_t angle_set);
+    virtual int16_t get_servo_angle();
+
+    /**
+     * @brief 设置水平面角度 控制角度，范围 -180~180
+     * @param[in] angle_set:  舵机角度
+     * @retval none
+    */
+    void set_servo_angle_horizontal(int16_t angle_set);
+    int16_t get_servo_angle_horizontal();
+
+        /**
+    * @brief     发送内容打包
+    * @param[in] cmd_type:  命令内容ID
+    * @param[in] *p_data: 数据段
+    * @param[in] len:     数据段长度
+    * @retval			返回要发送的数据大小
+    */
+    uint16_t send_PT_pack(uint8_t cmd_type, uint8_t *p_data, uint8_t len);
+
+    uint8_t get_check_sum(uint8_t *pch_message,uint32_t dw_length);
+
+public:
+    uint8_t PT_tx_buffer[20];
+
+};
+
+
+
+
 
 
 #endif /* _SERVO_HPP_ */

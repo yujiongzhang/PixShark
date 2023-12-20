@@ -85,6 +85,7 @@ void Main(void)
     jet_servo_task_start();
 
     crawler_task_start();
+    pt_task_start();
 
 
     // while (1)

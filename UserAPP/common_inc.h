@@ -36,6 +36,7 @@ void Main(void);
 #include "thruster_task.hpp"
 #include "crawler_task.hpp"
 #include "jet_servo_task.hpp"
+#include "pt_task.hpp"
 
 #endif
 #endif //_COMMON_INC_H_

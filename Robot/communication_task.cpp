@@ -32,6 +32,7 @@ static int32 servo_angle;
 static int32 thruster_cmd[6] = {100};
 static int32 crawler_cmd[2] = {0};
 static int32 jet_servo_angle;
+static int32 pt_angles_cmd[2] = {0};
 
 
 using namespace std;
@@ -65,6 +66,7 @@ void communication_task(const void *arg)
     com_nodePtr->subscribe(CRAWLER_TOPIC);
 
     com_nodePtr->subscribe(JET_SERVO_TOPIC);
+    com_nodePtr->subscribe(PT_ANGLES_TOPIC);
 
     for(;;)
     {
@@ -107,6 +109,13 @@ void communication_task(const void *arg)
             xTaskNotifyGive(jet_servo_task_handle);
         }
 
+        else if(recv_topic.compare(PT_ANGLES_TOPIC) == 0)
+        {
+            result.Get("pitch", pt_angles_cmd[0]);
+            result.Get("horizontal", pt_angles_cmd[1]);
+            xTaskNotifyGive(pt_task_handle);
+        }
+
         
     }
 }
@@ -136,6 +145,11 @@ const int32_t *get_crawler_cmdPrt()
 const int32_t *get_jet_servo_anglePrt()
 {
     return &jet_servo_angle;
+}
+
+const int32_t *get_pt_anglesPrt()
+{
+    return pt_angles_cmd;
 }
 
 bool publish(const char* topic, const char* payload, uint32_t payload_len)

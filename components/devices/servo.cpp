@@ -22,6 +22,8 @@
 #include "bsp_can.h"
 #include <assert.h>
 
+
+
 AUSServo::AUSServo(uint8_t id = 0x00)
 {
     this->servo_id = id;
@@ -228,3 +230,97 @@ void AUSServo_Can::write(void *data, int len)
     }
     bsp_can_transmit(this->CAN_ID, data_temp, len_temp);
 }
+
+UnderWater_PT::UnderWater_PT()
+{
+}
+
+UnderWater_PT::~UnderWater_PT()
+{
+}
+
+void UnderWater_PT::write(void *data, int len)
+{
+    //TODO: 底层通讯方式
+    bsp_usart_transmit(SERVO_UART_CHANNEL, (uint8_t *)data, len);
+}
+
+void UnderWater_PT::set_servo_angle(int16_t angle_set)
+{
+        uint8_t data[2];
+        int16_t angle_set_data = 0; // 往设备具体发送的值
+        if (angle_set >= 0)
+        {
+            angle_set_data = angle_set * 100;
+        }
+        else{
+            angle_set_data = angle_set * 100 + 36000;
+        }
+        data[0] = angle_set_data >> 8;  // 数据高位
+        data[1] = angle_set_data & 0xFF;// 数据低位
+        send_PT_pack(pitch_angle_set_id, data, sizeof(data));
+}
+
+int16_t UnderWater_PT::get_servo_angle()
+{
+    uint8_t data[2];
+    data[0] = 0;
+    data[1] = 0;
+    send_PT_pack(pitch_angle_get_id, data, sizeof(data));
+    return  0;
+}
+
+void UnderWater_PT::set_servo_angle_horizontal(int16_t angle_set)
+{
+        uint8_t data[2];
+        int16_t angle_set_data = 0; // 往设备具体发送的值
+        if (angle_set >= 0)
+        {
+            angle_set_data = angle_set * 100;
+        }
+        else{
+            angle_set_data = angle_set * 100 + 36000;
+        }
+        data[0] = angle_set_data >> 8;  // 数据高位
+        data[1] = angle_set_data & 0xFF;// 数据低位
+        send_PT_pack(horizontal_angle_set_id, data, sizeof(data));
+}
+
+int16_t UnderWater_PT::get_servo_angle_horizontal()
+{
+    uint8_t data[2];
+    data[0] = 0;
+    data[1] = 0;
+    send_PT_pack(horizontal_angle_get_id, data, sizeof(data));
+    return  0;
+}
+
+uint16_t UnderWater_PT::send_PT_pack(uint8_t cmd_type, uint8_t *p_data, uint8_t len)
+{
+    memset(PT_tx_buffer, 0, sizeof(PT_tx_buffer));
+    uint16_t send_len = 5 + len;
+    PT_tx_buffer[0] = 0xFF;
+    PT_tx_buffer[1] = 0x01;
+    PT_tx_buffer[2] = 0x00;
+    PT_tx_buffer[3] = cmd_type;
+    memcpy(&PT_tx_buffer[4], p_data, len);
+    PT_tx_buffer[send_len - 1] =  get_check_sum(PT_tx_buffer, send_len);
+    write(PT_tx_buffer, send_len);
+    return send_len;
+}
+
+uint8_t UnderWater_PT::get_check_sum(uint8_t *pch_message, uint32_t dw_length)
+{
+    uint8_t check_sum = 0;
+    if (pch_message == NULL)
+    {
+        return 0xFF;
+    }
+    // 最前面的0xFF不算，从第二个字节 加到 倒数第二个（共5个字节）
+    for (uint8_t i = 1; i < dw_length-1; i++)
+    {
+        check_sum += pch_message[i];
+    }
+    return check_sum;
+}
+

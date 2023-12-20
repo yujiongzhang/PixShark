@@ -12,7 +12,7 @@
 #define USB_COM_CHANNEL 0       //是否使用USB通信，默认为0时使用udp网络通信
 
 #define UDP_PORT        5000
-#define MQTT_SERVER_IP  "192.168.1.11"
+#define MQTT_SERVER_IP  "192.168.1.10" // 工控机为 11
 
 
 #define LED_TOPIC       "/led"
@@ -24,6 +24,7 @@
 #define IMU_TOPIC "/imu"
 #define CABIN_INFO_TOPIC "/cabin_info"
 #define JET_SERVO_TOPIC  "/jet_servo"
+#define PT_ANGLES_TOPIC "/pt_angles"
 
 
 /**Motor config*/
