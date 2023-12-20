@@ -45,7 +45,8 @@ static void pt_task(void const * argument)
         }
         
         servo_pt->set_servo_angle(pt_datasPtr[0]);
-        // servo_pt->set_servo_angle_horizontal(pt_datasPtr[1]);
+        osDelay(5);//防止串口发的太快，前面的数据被后面的覆盖了
+        servo_pt->set_servo_angle_horizontal(pt_datasPtr[1]);
     }
 }
 
